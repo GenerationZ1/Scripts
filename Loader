@@ -1,0 +1,18 @@
+local Scripts = {
+    [79268393072444] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Sell%20Lemons",
+}
+
+local GameID = game.PlaceId
+
+if Scripts[GameID] then
+    print("✅ Loader: Game ID " .. GameID .. " Loading Script")
+    local Success, Error = pcall(function()
+        loadstring(game:HttpGet(Scripts[GameID]))()
+    end)
+    
+    if not Success then
+        warn("Error while Loading " .. tostring(Error))
+    end
+else
+    warn("⚠️ No script for this Game " .. GameID .. " found.")
+end
