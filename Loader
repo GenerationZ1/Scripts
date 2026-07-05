@@ -13,10 +13,81 @@ if Scripts[GameID] then
     local Success, Error = pcall(function()
         loadstring(game:HttpGet(Scripts[GameID]))()
     end)
-    
+
     if not Success then
         warn("Error while Loading " .. tostring(Error))
     end
 else
     warn("⚠️ No script for this Game " .. GameID .. " found.")
+
+    -- Show popup notification
+    local player = game:GetService("Players").LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "ScriptLoaderPopup"
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = playerGui
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 400, 0, 180)
+    frame.Position = UDim2.new(0.5, -200, 0.5, -90)
+    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+    frame.BorderSizePixel = 0
+    frame.Parent = screenGui
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = frame
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(255, 80, 80)
+    stroke.Thickness = 2
+    stroke.Parent = frame
+
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 0, 40)
+    title.Position = UDim2.new(0, 0, 0, 10)
+    title.BackgroundTransparency = 1
+    title.Text = "⚠️ Game Not Supported"
+    title.TextColor3 = Color3.fromRGB(255, 80, 80)
+    title.TextSize = 24
+    title.Font = Enum.Font.GothamBold
+    title.Parent = frame
+
+    local message = Instance.new("TextLabel")
+    message.Size = UDim2.new(1, -40, 0, 60)
+    message.Position = UDim2.new(0, 20, 0, 55)
+    message.BackgroundTransparency = 1
+    message.Text = "No script found for this game.\nPlease join a supported map/round first."
+    message.TextColor3 = Color3.fromRGB(220, 220, 220)
+    message.TextSize = 16
+    message.Font = Enum.Font.Gotham
+    message.TextWrapped = true
+    message.Parent = frame
+
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0, 120, 0, 36)
+    closeButton.Position = UDim2.new(0.5, -60, 1, -50)
+    closeButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+    closeButton.Text = "Close"
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.TextSize = 16
+    closeButton.Font = Enum.Font.GothamBold
+    closeButton.Parent = frame
+
+    local btnCorner = Instance.new("UICorner")
+    btnCorner.CornerRadius = UDim.new(0, 8)
+    btnCorner.Parent = closeButton
+
+    closeButton.MouseButton1Click:Connect(function()
+        screenGui:Destroy()
+    end)
+
+    -- Auto-close after 10 seconds
+    task.delay(10, function()
+        if screenGui and screenGui.Parent then
+            screenGui:Destroy()
+        end
+    end)
 end
