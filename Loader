@@ -4,7 +4,7 @@ local Scripts = {
     [108389155265141] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Bike%20Downhill",
     [92937726498067] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/%2B1%20Speed%20Super%20Hero%20Escape",
     [124786371598438] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Drain%20the%20Lake",
-    [102054284786904] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Secure%20The%20Airport",
+    [138145699008779] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Secure%20The%20Airport",
 }
 
 local GameID = game.PlaceId
@@ -60,7 +60,7 @@ else
     message.Size = UDim2.new(1, -40, 0, 60)
     message.Position = UDim2.new(0, 20, 0, 55)
     message.BackgroundTransparency = 1
-    message.Text = "No script found for this game.\nPlease join a supported map/round first."
+    message.Text = "No script found for this game.\nMake sure you are In a Map/Round!"
     message.TextColor3 = Color3.fromRGB(220, 220, 220)
     message.TextSize = 16
     message.Font = Enum.Font.Gotham
