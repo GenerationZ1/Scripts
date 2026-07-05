@@ -3,6 +3,7 @@ local Scripts = {
     [102054284786904] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Secure%20The%20Airport",
     [108389155265141] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Bike%20Downhill",
     [92937726498067] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/%2B1%20Speed%20Super%20Hero%20Escape",
+    [138381251771774] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Drain%20the%20Lake",
 }
 
 local GameID = game.PlaceId
