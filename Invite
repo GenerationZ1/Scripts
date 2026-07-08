@@ -1,1 +1,362 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local gui = player:WaitForChild("PlayerGui")
 
+-- ===== CONFIGURATION =====
+local INVITE_LINK = "https://discord.gg/N4S5gb5c7r"   -- DEIN DISCORD-LINK
+local FILE_NAME = "OverrideHubNotification.txt"     -- Speicherdatei
+local WAIT_TIME = 0                              -- 5 Minuten (in Sekunden)
+local WIDTH = 480
+local HEIGHT = 240  -- etwas höher, damit Platz für Hinweis ist
+
+-- ===== CHECK SAVE FILE =====
+local neverShow = false
+if writefile and readfile then
+    if isfile(FILE_NAME) and readfile(FILE_NAME) == "true" then
+        neverShow = true
+    end
+end
+
+if neverShow then return end
+
+task.wait(WAIT_TIME)
+
+-- Nochmal prüfen (falls während Wartezeit gespeichert)
+if writefile and isfile(FILE_NAME) and readfile(FILE_NAME) == "true" then
+    return
+end
+
+-- ===== CREATE GUI =====
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "OverrideNotification"
+screenGui.Parent = gui
+screenGui.ResetOnSpawn = false
+
+-- Haupt-Frame (Glassmorphism)
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, WIDTH, 0, HEIGHT)
+mainFrame.Position = UDim2.new(1, 120, 0.5, -HEIGHT/2)   -- Start: weit rechts
+mainFrame.AnchorPoint = Vector2.new(0, 0.5)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 22, 35)
+mainFrame.BackgroundTransparency = 0.2
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = screenGui
+
+-- Abgerundete Ecken
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 28)
+corner.Parent = mainFrame
+
+-- Schatten
+local shadow = Instance.new("Frame")
+shadow.Size = UDim2.new(1, 16, 1, 16)
+shadow.Position = UDim2.new(0, -8, 0, -8)
+shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+shadow.BackgroundTransparency = 0.75
+shadow.BorderSizePixel = 0
+shadow.ZIndex = 0
+shadow.Parent = mainFrame
+local shadowCorner = Instance.new("UICorner")
+shadowCorner.CornerRadius = UDim.new(0, 30)
+shadowCorner.Parent = shadow
+
+-- Rand (UIStroke)
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(255, 255, 255)
+stroke.Thickness = 2
+stroke.Transparency = 0.35
+stroke.Parent = mainFrame
+
+-- Hintergrund-Farbverlauf
+local gradientOverlay = Instance.new("Frame")
+gradientOverlay.Size = UDim2.new(1, 0, 1, 0)
+gradientOverlay.BackgroundColor3 = Color3.fromRGB(30, 40, 60)
+gradientOverlay.BackgroundTransparency = 0.3
+gradientOverlay.BorderSizePixel = 0
+gradientOverlay.ZIndex = 0
+gradientOverlay.Parent = mainFrame
+local gradientCorner = Instance.new("UICorner")
+gradientCorner.CornerRadius = UDim.new(0, 28)
+gradientCorner.Parent = gradientOverlay
+
+-- ===== INHALT =====
+
+-- Titel
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -30, 0, 45)
+titleLabel.Position = UDim2.new(0, 15, 0, 12)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "✦ OVERRIDE HUB ✦"
+titleLabel.TextColor3 = Color3.fromRGB(0, 210, 255)
+titleLabel.TextSize = 32
+titleLabel.Font = Enum.Font.GothamBlack
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.TextYAlignment = Enum.TextYAlignment.Top
+titleLabel.TextStrokeColor3 = Color3.fromRGB(0, 150, 255)
+titleLabel.TextStrokeTransparency = 0.3
+titleLabel.Parent = mainFrame
+
+-- Hauptnachricht
+local messageLabel = Instance.new("TextLabel")
+messageLabel.Size = UDim2.new(1, -30, 0, 60)
+messageLabel.Position = UDim2.new(0, 15, 0, 60)
+messageLabel.BackgroundTransparency = 1
+messageLabel.Text = "🚀 Join my Discord to support my work\n💬 Report bugs & suggest new features!"
+messageLabel.TextColor3 = Color3.fromRGB(235, 240, 255)
+messageLabel.TextSize = 18
+messageLabel.Font = Enum.Font.GothamMedium
+messageLabel.TextWrapped = true
+messageLabel.TextXAlignment = Enum.TextXAlignment.Left
+messageLabel.TextYAlignment = Enum.TextYAlignment.Top
+messageLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+messageLabel.TextStrokeTransparency = 0.5
+messageLabel.Parent = mainFrame
+
+-- Zusätzlicher Hinweis (wird sichtbar, wenn Checkbox aktiviert)
+local hintLabel = Instance.new("TextLabel")
+hintLabel.Size = UDim2.new(1, -30, 0, 28)
+hintLabel.Position = UDim2.new(0, 15, 0, 125)  -- unter der Hauptnachricht
+hintLabel.BackgroundTransparency = 1
+hintLabel.Text = "ℹ️ If you change your mind, you can still join our Discord via the Override Hub dashboard."
+hintLabel.TextColor3 = Color3.fromRGB(180, 210, 240)
+hintLabel.TextSize = 14
+hintLabel.Font = Enum.Font.GothamMedium
+hintLabel.TextWrapped = true
+hintLabel.TextXAlignment = Enum.TextXAlignment.Left
+hintLabel.TextYAlignment = Enum.TextYAlignment.Top
+hintLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+hintLabel.TextStrokeTransparency = 0.5
+hintLabel.Visible = false  -- anfangs ausgeblendet
+hintLabel.Parent = mainFrame
+
+-- Button-Bereich (unten)
+local buttonFrame = Instance.new("Frame")
+buttonFrame.Size = UDim2.new(1, -30, 0, 48)
+buttonFrame.Position = UDim2.new(0, 15, 1, -60)
+buttonFrame.BackgroundTransparency = 1
+buttonFrame.Parent = mainFrame
+
+-- Layout
+local layout = Instance.new("UIListLayout")
+layout.FillDirection = Enum.FillDirection.Horizontal
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+layout.VerticalAlignment = Enum.VerticalAlignment.Center
+layout.Padding = UDim.new(0, 14)
+layout.Parent = buttonFrame
+
+-- ===== BUTTONS =====
+
+-- 1. "Never show again" (Custom Checkbox)
+local neverContainer = Instance.new("Frame")
+neverContainer.Size = UDim2.new(0, 180, 0, 38)
+neverContainer.BackgroundTransparency = 1
+neverContainer.Parent = buttonFrame
+
+-- Checkbox-Quad
+local checkBox = Instance.new("Frame")
+checkBox.Size = UDim2.new(0, 20, 0, 20)
+checkBox.Position = UDim2.new(0, 0, 0.5, -10)
+checkBox.BackgroundColor3 = Color3.fromRGB(50, 50, 75)
+checkBox.BorderSizePixel = 0
+checkBox.Parent = neverContainer
+local checkCorner = Instance.new("UICorner")
+checkCorner.CornerRadius = UDim.new(0, 4)
+checkCorner.Parent = checkBox
+
+-- Haken
+local checkMark = Instance.new("Frame")
+checkMark.Size = UDim2.new(0.6, 0, 0.6, 0)
+checkMark.Position = UDim2.new(0.2, 0, 0.2, 0)
+checkMark.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+checkMark.BackgroundTransparency = 1
+checkMark.BorderSizePixel = 0
+checkMark.Parent = checkBox
+local checkMarkCorner = Instance.new("UICorner")
+checkMarkCorner.CornerRadius = UDim.new(0, 2)
+checkMarkCorner.Parent = checkMark
+
+-- Label
+local neverLabel = Instance.new("TextLabel")
+neverLabel.Size = UDim2.new(1, -25, 1, 0)
+neverLabel.Position = UDim2.new(0, 25, 0, 0)
+neverLabel.BackgroundTransparency = 1
+neverLabel.Text = "Never show again"
+neverLabel.TextColor3 = Color3.fromRGB(200, 200, 220)
+neverLabel.TextSize = 14
+neverLabel.Font = Enum.Font.GothamMedium
+neverLabel.TextXAlignment = Enum.TextXAlignment.Left
+neverLabel.TextYAlignment = Enum.TextYAlignment.Center
+neverLabel.Parent = neverContainer
+
+local neverHit = Instance.new("TextButton")
+neverHit.Size = UDim2.new(1, 0, 1, 0)
+neverHit.BackgroundTransparency = 1
+neverHit.Text = ""
+neverHit.Parent = neverContainer
+
+local isChecked = false
+neverHit.MouseButton1Click:Connect(function()
+    isChecked = not isChecked
+    if isChecked then
+        checkBox.BackgroundColor3 = Color3.fromRGB(40, 80, 120)
+        checkMark.BackgroundTransparency = 0
+        neverLabel.TextColor3 = Color3.fromRGB(120, 200, 255)
+        -- Hinweis einblenden
+        hintLabel.Visible = true
+        -- Optional: kleine Animation für den Hinweis (Fade-in)
+        hintLabel.TextTransparency = 0
+    else
+        checkBox.BackgroundColor3 = Color3.fromRGB(50, 50, 75)
+        checkMark.BackgroundTransparency = 1
+        neverLabel.TextColor3 = Color3.fromRGB(200, 200, 220)
+        -- Hinweis ausblenden
+        hintLabel.Visible = false
+    end
+end)
+
+-- 2. "No" Button
+local noButton = Instance.new("TextButton")
+noButton.Size = UDim2.new(0, 80, 0, 38)
+noButton.BackgroundColor3 = Color3.fromRGB(60, 60, 85)
+noButton.Text = "No"
+noButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+noButton.TextSize = 16
+noButton.Font = Enum.Font.GothamMedium
+noButton.Parent = buttonFrame
+local noCorner = Instance.new("UICorner")
+noCorner.CornerRadius = UDim.new(0, 12)
+noCorner.Parent = noButton
+-- Schatten
+local noShadow = Instance.new("Frame")
+noShadow.Size = UDim2.new(1, 0, 1, 0)
+noShadow.Position = UDim2.new(0, 0, 0, 2)
+noShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+noShadow.BackgroundTransparency = 0.4
+noShadow.BorderSizePixel = 0
+noShadow.ZIndex = 0
+noShadow.Parent = noButton
+local noShadowCorner = Instance.new("UICorner")
+noShadowCorner.CornerRadius = UDim.new(0, 12)
+noShadowCorner.Parent = noShadow
+
+-- 3. "Copy Invite" Hauptbutton
+local copyButton = Instance.new("TextButton")
+copyButton.Size = UDim2.new(0, 160, 0, 38)
+copyButton.BackgroundColor3 = Color3.fromRGB(0, 150, 230)
+copyButton.Text = "📋 Copy Invite"
+copyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyButton.TextSize = 16
+copyButton.Font = Enum.Font.GothamBold
+copyButton.Parent = buttonFrame
+local copyCorner = Instance.new("UICorner")
+copyCorner.CornerRadius = UDim.new(0, 12)
+copyCorner.Parent = copyButton
+-- Schatten
+local copyShadow = Instance.new("Frame")
+copyShadow.Size = UDim2.new(1, 0, 1, 0)
+copyShadow.Position = UDim2.new(0, 0, 0, 2)
+copyShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+copyShadow.BackgroundTransparency = 0.4
+copyShadow.BorderSizePixel = 0
+copyShadow.ZIndex = 0
+copyShadow.Parent = copyButton
+local copyShadowCorner = Instance.new("UICorner")
+copyShadowCorner.CornerRadius = UDim.new(0, 12)
+copyShadowCorner.Parent = copyShadow
+-- Glanzstreifen
+local copyGlow = Instance.new("Frame")
+copyGlow.Size = UDim2.new(1, -12, 0, 2)
+copyGlow.Position = UDim2.new(0, 6, 0, 6)
+copyGlow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+copyGlow.BackgroundTransparency = 0.5
+copyGlow.BorderSizePixel = 0
+copyGlow.Parent = copyButton
+local copyGlowCorner = Instance.new("UICorner")
+copyGlowCorner.CornerRadius = UDim.new(1, 0)
+copyGlowCorner.Parent = copyGlow
+
+-- ===== ANIMATION (Slide-in von rechts mit Bounce) =====
+local TweenService = game:GetService("TweenService")
+
+local startPos = UDim2.new(1, 120, 0.5, -HEIGHT/2)
+local endPos   = UDim2.new(1, -20 - WIDTH, 0.5, -HEIGHT/2)
+
+mainFrame.Position = startPos
+
+local slideIn = TweenService:Create(mainFrame,
+    TweenInfo.new(0.9, Enum.EasingStyle.Back, Enum.EasingDirection.Out, 0, false, 0.5),
+    {Position = endPos}
+)
+slideIn:Play()
+
+-- Puls-Animation für Copy-Button
+task.wait(1.2)
+local pulse = TweenService:Create(copyButton,
+    TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, 0, true, 0),
+    {BackgroundColor3 = Color3.fromRGB(0, 180, 255)}
+)
+pulse:Play()
+task.wait(0.6)
+pulse:Cancel()
+copyButton.BackgroundColor3 = Color3.fromRGB(0, 150, 230)
+
+-- ===== SCHLIESSEN-FUNKTION (mit Slide-out nach rechts) =====
+local function closeNotification(copyInvite)
+    if isChecked and writefile then
+        writefile(FILE_NAME, "true")
+    end
+
+    local slideOut = TweenService:Create(mainFrame,
+        TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+        {Position = startPos}
+    )
+    slideOut:Play()
+    slideOut.Completed:Connect(function()
+        if copyInvite then
+            if setclipboard then
+                setclipboard(INVITE_LINK)
+                copyButton.Text = "✅ Copied!"
+                task.wait(0.8)
+            else
+                warn("setclipboard not available!")
+            end
+        end
+        screenGui:Destroy()
+    end)
+end
+
+-- ===== BUTTON EVENTS =====
+noButton.MouseButton1Click:Connect(function() closeNotification(false) end)
+copyButton.MouseButton1Click:Connect(function() closeNotification(true) end)
+
+-- ===== HOVER EFFEKTE =====
+copyButton.MouseEnter:Connect(function()
+    copyButton.BackgroundColor3 = Color3.fromRGB(0, 170, 250)
+    copyButton.Size = UDim2.new(0, 165, 0, 40)
+end)
+copyButton.MouseLeave:Connect(function()
+    copyButton.BackgroundColor3 = Color3.fromRGB(0, 150, 230)
+    copyButton.Size = UDim2.new(0, 160, 0, 38)
+end)
+
+noButton.MouseEnter:Connect(function()
+    noButton.BackgroundColor3 = Color3.fromRGB(80, 80, 110)
+    noButton.Size = UDim2.new(0, 82, 0, 40)
+end)
+noButton.MouseLeave:Connect(function()
+    noButton.BackgroundColor3 = Color3.fromRGB(60, 60, 85)
+    noButton.Size = UDim2.new(0, 80, 0, 38)
+end)
+
+neverHit.MouseEnter:Connect(function()
+    neverLabel.TextColor3 = Color3.fromRGB(220, 220, 240)
+end)
+neverHit.MouseLeave:Connect(function()
+    if isChecked then
+        neverLabel.TextColor3 = Color3.fromRGB(120, 200, 255)
+    else
+        neverLabel.TextColor3 = Color3.fromRGB(200, 200, 220)
+    end
+end)
+
+print("✅ Override Hub Notification wird in " .. WAIT_TIME .. " Sekunden erscheinen (oder ist bereits gestartet).")
