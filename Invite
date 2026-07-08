@@ -3,9 +3,9 @@ local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
 
 -- ===== CONFIGURATION =====
-local INVITE_LINK = "https://discord.gg/N4S5gb5c7r"   -- DEIN DISCORD-LINK
+local INVITE_LINK = "https://discord.gg/N4S5gb5c7r"  
 local FILE_NAME = "OverrideHubNotification.txt"     -- Speicherdatei
-local WAIT_TIME = 0                              -- 5 Minuten (in Sekunden)
+local WAIT_TIME = 180                             -- in Sekunden)
 local WIDTH = 480
 local HEIGHT = 240  -- etwas höher, damit Platz für Hinweis ist
 
