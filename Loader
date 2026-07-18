@@ -7,7 +7,8 @@ local Scripts = {
     [155615604] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Prison%20Life",
     [96947338677734] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/%2B1%20Speed%20Slime%20Keyboard%20Escape",
     [113900430381305] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/%2B1%20Speed%20Slime%20Keyboard%20Escape",
-    
+    [115681808123944] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Throw%20a%20Coin",
+    [72042130041700] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Throw%20a%20Coin",
 }
 
 local GameID = game.PlaceId
