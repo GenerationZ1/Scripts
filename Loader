@@ -10,6 +10,7 @@ local Scripts = {
     [115681808123944] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Throw%20a%20Coin",
     [72042130041700] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Throw%20a%20Coin",
     [98695134949589] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/%2B1%20Followers%20Per%20Click",
+    [113290951185459] = "https://raw.githubusercontent.com/GenerationZ1/Scripts/refs/heads/main/Anime%20Dice",
 }
 
 local GameID = game.PlaceId
